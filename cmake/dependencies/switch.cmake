@@ -52,3 +52,12 @@ endif()
 
 # ========= StormLib =========
 target_compile_definitions(storm PRIVATE _POSIX_C_SOURCE=200809L)
+
+
+# Use Nintendo Switch button mapping
+message(STATUS "Applying Nintenod Switch button mapping")
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -Dpatch_file=${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies/patches/imgui_sdl2_switch_buttons.patch -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies/git-patch.cmake
+    WORKING_DIRECTORY ${imgui_SOURCE_DIR}
+)   
+

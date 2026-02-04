@@ -14,13 +14,13 @@ SDLButtonToAnyMapping::~SDLButtonToAnyMapping() {
 
 std::string SDLButtonToAnyMapping::GetPhysicalInputName() {
     switch (mControllerButton) {
-        case SDL_CONTROLLER_BUTTON_A:
-            return "A";
         case SDL_CONTROLLER_BUTTON_B:
+            return "A";
+        case SDL_CONTROLLER_BUTTON_A:
             return "B";
-        case SDL_CONTROLLER_BUTTON_X:
-            return "X";
         case SDL_CONTROLLER_BUTTON_Y:
+            return "X";
+        case SDL_CONTROLLER_BUTTON_X:
             return "Y";
         case SDL_CONTROLLER_BUTTON_BACK:
             return "View";
