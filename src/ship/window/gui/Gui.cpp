@@ -56,6 +56,8 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARA
 namespace Ship {
 #define TOGGLE_BTN ImGuiKey_F1
 #define TOGGLE_PAD_BTN ImGuiKey_GamepadBack
+#define TOGGLE_PAD_COMBO_HLD ImGuiKey_GamepadStart
+#define TOGGLE_PAD_COMBO_BTN ImGuiKey_GamepadR1
 
 static Ship::Coords mPrevMousePos;
 
@@ -562,13 +564,37 @@ void Gui::DrawMenu() {
 
     ImGui::DockSpace(dockId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_NoDockingInCentralNode);
 
-    if (ImGui::IsKeyPressed(TOGGLE_BTN, false) || ImGui::IsKeyPressed(ImGuiKey_Escape, false) ||
-        (ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false) &&
-         Ship::Context::GetInstance()->GetConsoleVariables()->GetInteger(CVAR_IMGUI_CONTROLLER_NAV, 0))) {
-        if ((ImGui::IsKeyPressed(ImGuiKey_Escape, false) || ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false)) && GetMenu()) {
+    if (
+        ImGui::IsKeyPressed(TOGGLE_BTN, false) || 
+        ImGui::IsKeyPressed(ImGuiKey_Escape, false) ||
+        (
+            (
+                ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false) ||
+                ImGui::IsKeyPressed(TOGGLE_PAD_COMBO_BTN, false)
+            ) &&
+            Ship::Context::GetInstance()->GetConsoleVariables()->GetInteger(CVAR_IMGUI_CONTROLLER_NAV, 0)
+        )
+    ) 
+    {
+        // If the GUI Menu is open, close it with a single press of the combo button
+        if (ImGui::IsKeyPressed(TOGGLE_PAD_COMBO_BTN, false) && GetMenuOrMenubarVisible()) {
             GetMenu()->ToggleVisibility();
-        } else if ((ImGui::IsKeyPressed(TOGGLE_BTN, false) || ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false)) &&
-                   GetMenuBar()) {
+        }
+        if (
+            (
+                ImGui::IsKeyPressed(ImGuiKey_Escape, false) || 
+                ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false) ||
+                (ImGui::IsKeyDown(TOGGLE_PAD_COMBO_HLD, false) && ImGui::IsKeyPressed(TOGGLE_PAD_COMBO_BTN, false)) // Open the GUI Menu with a combination of holding the first combo
+            ) && 
+            GetMenu()) {
+            GetMenu()->ToggleVisibility();
+        } else if (
+            (
+                ImGui::IsKeyPressed(TOGGLE_BTN, false) || 
+                ImGui::IsKeyPressed(TOGGLE_PAD_BTN, false) ||
+                (ImGui::IsKeyDown(TOGGLE_PAD_COMBO_HLD, false) && ImGui::IsKeyPressed(TOGGLE_PAD_COMBO_BTN, false)) // Open the GUI Menu with a combination of holding the first combo
+            ) &&
+            GetMenuBar()) {
             GetMenuBar()->ToggleVisibility();
         }
         if (!GetMenuOrMenubarVisible()) {
